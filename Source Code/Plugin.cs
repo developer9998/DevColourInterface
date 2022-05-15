@@ -19,7 +19,10 @@ namespace DevColourInterface
         public static int ColourStage = 0;
         public static int ColourStage2 = 0;
         public static GameObject colourPreview;
+        public static GameObject colourPreviewIgloo;
         public static string fileLocation = Path.GetDirectoryName(Assembly.GetExecutingAssembly().Location);
+
+#pragma warning disable IDE0051 // Remove unused private members
 
         public static void SaveFile(float red, float green, float blue, float redAlt, float greenAlt, float blueAlt)
         {
@@ -35,6 +38,11 @@ namespace DevColourInterface
             colourPreview.transform.GetChild(4).GetChild(1).GetComponent<Text>().text = $"{PlayerPrefs.GetFloat("greenValue") * 9f}";
             colourPreview.transform.GetChild(4).GetChild(2).GetComponent<Text>().text = $"{PlayerPrefs.GetFloat("blueValue") * 9f}";
             colourPreview.transform.GetChild(4).GetChild(3).GetComponent<Text>().text = $"{PlayerPrefs.GetFloat("redValue") * 9f}{PlayerPrefs.GetFloat("greenValue") * 9f}{PlayerPrefs.GetFloat("blueValue") * 9f}";
+
+            colourPreviewIgloo.transform.GetChild(4).GetChild(0).GetComponent<Text>().text = $"{PlayerPrefs.GetFloat("redValue") * 9f}";
+            colourPreviewIgloo.transform.GetChild(4).GetChild(1).GetComponent<Text>().text = $"{PlayerPrefs.GetFloat("greenValue") * 9f}";
+            colourPreviewIgloo.transform.GetChild(4).GetChild(2).GetComponent<Text>().text = $"{PlayerPrefs.GetFloat("blueValue") * 9f}";
+            colourPreviewIgloo.transform.GetChild(4).GetChild(3).GetComponent<Text>().text = $"{PlayerPrefs.GetFloat("redValue") * 9f}{PlayerPrefs.GetFloat("greenValue") * 9f}{PlayerPrefs.GetFloat("blueValue") * 9f}";
         }
 
         public static void UpdatePreviewColours()
@@ -43,6 +51,11 @@ namespace DevColourInterface
             colourPreview.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = new Color(0, PlayerPrefs.GetFloat("greenValue"), 0);
             colourPreview.transform.GetChild(2).GetComponent<MeshRenderer>().material.color = new Color(0, 0, PlayerPrefs.GetFloat("blueValue"));
             colourPreview.transform.GetChild(3).GetComponent<MeshRenderer>().material.color = new Color(PlayerPrefs.GetFloat("redValue"), PlayerPrefs.GetFloat("greenValue"), PlayerPrefs.GetFloat("blueValue"));
+
+            colourPreviewIgloo.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(PlayerPrefs.GetFloat("redValue"), 0, 0);
+            colourPreviewIgloo.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = new Color(0, PlayerPrefs.GetFloat("greenValue"), 0);
+            colourPreviewIgloo.transform.GetChild(2).GetComponent<MeshRenderer>().material.color = new Color(0, 0, PlayerPrefs.GetFloat("blueValue"));
+            colourPreviewIgloo.transform.GetChild(3).GetComponent<MeshRenderer>().material.color = new Color(PlayerPrefs.GetFloat("redValue"), PlayerPrefs.GetFloat("greenValue"), PlayerPrefs.GetFloat("blueValue"));
         }
 
         public static void UpdatePreviewColoursFloat(float red, float green, float blue)
@@ -51,6 +64,11 @@ namespace DevColourInterface
             colourPreview.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = new Color(0, green, 0);
             colourPreview.transform.GetChild(2).GetComponent<MeshRenderer>().material.color = new Color(0, 0, blue);
             colourPreview.transform.GetChild(3).GetComponent<MeshRenderer>().material.color = new Color(red, green, blue);
+
+            colourPreviewIgloo.transform.GetChild(0).GetComponent<MeshRenderer>().material.color = new Color(red, 0, 0);
+            colourPreviewIgloo.transform.GetChild(1).GetComponent<MeshRenderer>().material.color = new Color(0, green, 0);
+            colourPreviewIgloo.transform.GetChild(2).GetComponent<MeshRenderer>().material.color = new Color(0, 0, blue);
+            colourPreviewIgloo.transform.GetChild(3).GetComponent<MeshRenderer>().material.color = new Color(red, green, blue);
         }
 
         void Awake()
@@ -78,13 +96,21 @@ namespace DevColourInterface
             colourPreview.transform.GetChild(4).GetChild(2).GetComponent<Text>().enabled = false;
             colourPreview.transform.GetChild(4).GetChild(3).GetComponent<Text>().enabled = false;
 
+            colourPreviewIgloo = Instantiate(colourPreviewGameObject);
+            colourPreviewIgloo.transform.GetChild(0).gameObject.AddComponent<ViewText>();
+            colourPreviewIgloo.transform.GetChild(1).gameObject.AddComponent<ViewText>();
+            colourPreviewIgloo.transform.GetChild(2).gameObject.AddComponent<ViewText>();
+            colourPreviewIgloo.transform.GetChild(3).gameObject.AddComponent<ViewText>();
+
+            colourPreviewIgloo.transform.position = new Vector3(-27.25f, 18.25f, - 94.3101f);
+            colourPreviewIgloo.transform.GetChild(4).transform.rotation = Quaternion.Euler(0f, 313.8699f, 0f);
+            colourPreviewIgloo.transform.GetChild(4).GetChild(0).GetComponent<Text>().enabled = false;
+            colourPreviewIgloo.transform.GetChild(4).GetChild(1).GetComponent<Text>().enabled = false;
+            colourPreviewIgloo.transform.GetChild(4).GetChild(2).GetComponent<Text>().enabled = false;
+            colourPreviewIgloo.transform.GetChild(4).GetChild(3).GetComponent<Text>().enabled = false;
+
             UpdatePreviewColours();
             UpdateText();
-        }
-
-        void Update()
-        {
-            /* Code here runs every frame when the mod is enabled */
         }
     }
 }

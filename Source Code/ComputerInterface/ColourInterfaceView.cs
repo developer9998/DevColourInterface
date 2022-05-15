@@ -14,6 +14,10 @@ namespace DevColourInterface
 	{
 		const string highlightColor = "FF51FFff"; // thanks paint.net
 
+#pragma warning disable IDE0052 // Remove unread private members
+#pragma warning disable IDE0044 // Add readonly modifier
+#pragma warning disable IDE0017 // Simplify object initialization
+
 		private readonly UISelectionHandler _selectionHandler;
 
 		float Colour1;
@@ -28,12 +32,12 @@ namespace DevColourInterface
 		float _Colour2;
 		float _Colour3;
 
-		float _FixedColour1;
-		float _FixedColour2;
+        float _FixedColour1;
+        float _FixedColour2;
 		float _FixedColour3;
 
-		bool isRGBisNotHSV = true;
-		float RGBRed;
+        bool isRGBisNotHSV = true;
+        float RGBRed;
 		float RGBGreen;
 		float RGBBlue;
 
@@ -41,9 +45,9 @@ namespace DevColourInterface
 
 		public ColourInterfaceView()
 		{
-			_selectionHandler = new UISelectionHandler(EKeyboardKey.Up, EKeyboardKey.Down, EKeyboardKey.Enter);
-			// the max zero indexed entry (2 entries - 1 since zero indexed)
-			_selectionHandler.MaxIdx = 1;
+            _selectionHandler = new UISelectionHandler(EKeyboardKey.Up, EKeyboardKey.Down, EKeyboardKey.Enter);
+                               // the max zero indexed entry (2 entries - 1 since zero indexed)
+            _selectionHandler.MaxIdx = 1;
 			// when the "selection" key is pressed (we set it to enter above)
 			_selectionHandler.OnSelected += OnEntrySelected;
 			// since you quite often want to have an indicator of the selected item
