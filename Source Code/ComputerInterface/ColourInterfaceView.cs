@@ -14,10 +14,6 @@ namespace DevColourInterface
 	{
 		const string highlightColor = "FF51FFff"; // thanks paint.net
 
-#pragma warning disable IDE0052 // Remove unread private members
-#pragma warning disable IDE0044 // Add readonly modifier
-#pragma warning disable IDE0017 // Simplify object initialization
-
 		private readonly UISelectionHandler _selectionHandler;
 
 		float Colour1;
@@ -40,6 +36,8 @@ namespace DevColourInterface
         float RGBRed;
 		float RGBGreen;
 		float RGBBlue;
+
+		float[] rgbList = { 0, 28, 57, 85, 113, 142, 170, 198, 227, 255 };
 
 		bool hasSavedFile = false;
 
@@ -79,40 +77,36 @@ namespace DevColourInterface
 				str.MakeBar('-', SCREEN_WIDTH, 0, "ffffff10");
 				str.EndAlign().AppendLines(1);
 
-				if (Plugin.Page == 0)
-				{
-					DrawBody(str);
-				} 
-				else
-				if (Plugin.Page == 1)
-				{
-					DrawSetMonke(str);
-				}
-				else
-				if (Plugin.Page == 2)
-				{
-					DrawBodyConvert(str);
-				}
-				else
-				if (Plugin.Page == 3)
-				{
-					DrawConvertResults(str);
-					if (hasSavedFile)
-                    {
-						str.BeginCenter();
-						str.AppendLine();
-						str.BeginColor(highlightColor);
-						str.AppendLine("Saved data successfully");
-						str.EndColor();
-						str.EndAlign();
-					}
-					else
-                    {
-						str.BeginCenter();
-						str.AppendLine();
-						str.AppendLine("Save data (Option 1)");
-						str.EndAlign();
-					}
+				switch (Plugin.instance.Page)
+                {
+					case 0:
+						DrawBody(str);
+						break;
+					case 1:
+						DrawSetMonke(str);
+						break;
+					case 2:
+						DrawBodyConvert(str);
+                        break;
+					case 3:
+						DrawConvertResults(str);
+						if (hasSavedFile)
+						{
+							str.BeginCenter();
+							str.AppendLine();
+							str.BeginColor(highlightColor);
+							str.AppendLine("Saved data successfully");
+							str.EndColor();
+							str.EndAlign();
+						}
+						else
+						{
+							str.BeginCenter();
+							str.AppendLine();
+							str.AppendLine("Save data (Option 1)");
+							str.EndAlign();
+						}
+						break;
 				}
 			});
 		}
@@ -151,21 +145,21 @@ namespace DevColourInterface
 			str.AppendLine("Type your colour (0-9)");
 			str.AppendLine();
 
-			if (Plugin.ColourStage2 == 0)
+			if (Plugin.instance.ColourStage2 == 0)
 			{
 				str.AppendClr(_Colour1.ToString(), highlightColor).EndColor().AppendLine();
 				str.AppendClr(_Colour2.ToString(), "FFFFFFFF").EndColor().AppendLine();
 				str.AppendClr(_Colour3.ToString(), "FFFFFFFF").EndColor().AppendLine();
 			}
 			else
-			if (Plugin.ColourStage2 == 1)
+			if (Plugin.instance.ColourStage2 == 1)
 			{
 				str.AppendClr(_Colour1.ToString(), "FFFFFFFF").EndColor().AppendLine();
 				str.AppendClr(_Colour2.ToString(), highlightColor).EndColor().AppendLine();
 				str.AppendClr(_Colour3.ToString(), "FFFFFFFF").EndColor().AppendLine();
 			}
 			else
-			if (Plugin.ColourStage2 == 2)
+			if (Plugin.instance.ColourStage2 == 2)
 			{
 				str.AppendClr(_Colour1.ToString(), "FFFFFFFF").EndColor().AppendLine();
 				str.AppendClr(_Colour2.ToString(), "FFFFFFFF").EndColor().AppendLine();
@@ -182,21 +176,21 @@ namespace DevColourInterface
 			str.AppendLine("Type your colour (0-9)");
 			str.AppendLine();
 
-			if (Plugin.ColourStage == 0)
+			if (Plugin.instance.ColourStage == 0)
             {
 				str.AppendClr(Colour1.ToString(), highlightColor).EndColor().AppendLine();
 				str.AppendClr(Colour2.ToString(), "FFFFFFFF").EndColor().AppendLine();
 				str.AppendClr(Colour3.ToString(), "FFFFFFFF").EndColor().AppendLine();
 			}
 			else
-			if (Plugin.ColourStage == 1)
+			if (Plugin.instance.ColourStage == 1)
 			{
 				str.AppendClr(Colour1.ToString(), "FFFFFFFF").EndColor().AppendLine();
 				str.AppendClr(Colour2.ToString(), highlightColor).EndColor().AppendLine();
 				str.AppendClr(Colour3.ToString(), "FFFFFFFF").EndColor().AppendLine();
 			}
 			else
-			if (Plugin.ColourStage == 2)
+			if (Plugin.instance.ColourStage == 2)
 			{
 				str.AppendClr(Colour1.ToString(), "FFFFFFFF").EndColor().AppendLine();
 				str.AppendClr(Colour2.ToString(), "FFFFFFFF").EndColor().AppendLine();
@@ -209,16 +203,16 @@ namespace DevColourInterface
 
 		private void OnEntrySelected(int index)
 		{
-			if (Plugin.Page == 0)
+			if (Plugin.instance.Page == 0)
             {
 				switch (index)
 				{
 					case 0:
-						Plugin.Page = 1;
+						Plugin.instance.Page = 1;
 						UpdateScreen();
 						break;
 					case 1:
-						Plugin.Page = 2;
+						Plugin.instance.Page = 2;
 						UpdateScreen();
 						break;
 				}
@@ -227,7 +221,7 @@ namespace DevColourInterface
 
 		public override void OnKeyPressed(EKeyboardKey key)
 		{
-			if (Plugin.Page == 3)
+			if (Plugin.instance.Page == 3)
             {
 				if (_selectionHandler.HandleKeypress(key))
 				{
@@ -237,8 +231,8 @@ namespace DevColourInterface
 
 				if (key == EKeyboardKey.Back)
 				{
-					Plugin.ColourStage2 = 0;
-					Plugin.Page = 0;
+					Plugin.instance.ColourStage2 = 0;
+					Plugin.instance.Page = 0;
 					_Colour1 = 0;
 					_Colour2 = 0;
 					_Colour3 = 0;
@@ -252,12 +246,12 @@ namespace DevColourInterface
 				if (key == EKeyboardKey.Option1)
 				{
 					hasSavedFile = true;
-					Plugin.SaveFile(RGBRed, RGBGreen, RGBBlue, _Colour1, _Colour2, _Colour3);
+					Plugin.instance.SaveFile(RGBRed, RGBGreen, RGBBlue, _Colour1, _Colour2, _Colour3);
 					UpdateScreen();
 				}
 			}
 			else
-			if (Plugin.Page == 0)
+			if (Plugin.instance.Page == 0)
 			{
 				if (_selectionHandler.HandleKeypress(key))
 				{
@@ -267,59 +261,57 @@ namespace DevColourInterface
 
 				if (key == EKeyboardKey.Back)
 				{
-					Plugin.ColourStage = 0;
+					Plugin.instance.ColourStage = 0;
 					ReturnView();
 				}
 			}
 			else
-			if (Plugin.Page == 1)
+			if (Plugin.instance.Page == 1)
             {
 				if (key == EKeyboardKey.Back)
 				{
-					if (Plugin.ColourStage == 0 || Plugin.ColourStage == 3)
+					if (Plugin.instance.ColourStage == 0 || Plugin.instance.ColourStage == 3)
 					{
-						Plugin.ColourStage = 0;
-						Plugin.Page = 0;
+						Plugin.instance.ColourStage = 0;
+						Plugin.instance.Page = 0;
 						Colour1 = 0f;
 						FixedColour1 = 0f;
 						Colour2 = 0f;
 						FixedColour2 = 0f;
 						Colour3 = 0f;
 						FixedColour3 = 0f;
-						Plugin.UpdatePreviewColours();
+						Plugin.instance.UpdatePreviewColours();
 						UpdateScreen();
 					}
 					else
-					if (Plugin.ColourStage == 2)
+					if (Plugin.instance.ColourStage == 2)
 					{
-						Plugin.ColourStage = 1;
+						Plugin.instance.ColourStage = 1;
 						Colour2 = 0f;
 						FixedColour2 = 0f;
-						//Plugin.UpdatePreviewColoursFloat(FixedColour1, FixedColour2, FixedColour3);
 						UpdateScreen();
 					}
 					else
-					if (Plugin.ColourStage == 1)
+					if (Plugin.instance.ColourStage == 1)
 					{
-						Plugin.ColourStage = 0;
+						Plugin.instance.ColourStage = 0;
 						Colour1 = 0f;
 						FixedColour1 = 0f;
 						Colour2 = 0f;
 						FixedColour2 = 0f;
-						//Plugin.UpdatePreviewColoursFloat(FixedColour1, FixedColour2, FixedColour3);
 						UpdateScreen();
 					}
 				}
 			}
 			else
-			if (Plugin.Page == 2)
+			if (Plugin.instance.Page == 2)
 			{
 				if (key == EKeyboardKey.Back)
 				{
-					if (Plugin.ColourStage2 == 0 || Plugin.ColourStage2 == 3)
+					if (Plugin.instance.ColourStage2 == 0 || Plugin.instance.ColourStage2 == 3)
 					{
-						Plugin.ColourStage2 = 0;
-						Plugin.Page = 0;
+						Plugin.instance.ColourStage2 = 0;
+						Plugin.instance.Page = 0;
 						_Colour1 = 0f;
 						_FixedColour1 = 0f;
 						_Colour2 = 0f;
@@ -329,162 +321,56 @@ namespace DevColourInterface
 						UpdateScreen();
 					}
 					else
-					if (Plugin.ColourStage2 == 2)
+					if (Plugin.instance.ColourStage2 == 2)
 					{
-						Plugin.ColourStage2 = 1;
+						Plugin.instance.ColourStage2 = 1;
 						_Colour2 = 0f;
 						_FixedColour2 = 0f;
-						//Plugin.UpdatePreviewColoursFloat(FixedColour1, FixedColour2, FixedColour3);
 						UpdateScreen();
 					}
 					else
-					if (Plugin.ColourStage2 == 1)
+					if (Plugin.instance.ColourStage2 == 1)
 					{
-						Plugin.ColourStage2 = 0;
+						Plugin.instance.ColourStage2 = 0;
 						_Colour1 = 0f;
 						_FixedColour1 = 0f;
 						_Colour2 = 0f;
 						_FixedColour2 = 0f;
-						//Plugin.UpdatePreviewColoursFloat(FixedColour1, FixedColour2, FixedColour3);
 						UpdateScreen();
 					}
 				}
 			}
 
-			if (Plugin.Page == 1)
+			if (Plugin.instance.Page == 1)
             {
-				if (Plugin.ColourStage == 0)
+				if (Plugin.instance.ColourStage == 0)
                 {
-					if (key == EKeyboardKey.NUM0)
+					if (key.IsNumberKey())
 					{
-						SetBasicColour(0, 1, 0);
-					}
-					if (key == EKeyboardKey.NUM1)
-					{
-						SetBasicColour(0, 1, 1);
-					}
-					if (key == EKeyboardKey.NUM2)
-					{
-						SetBasicColour(0, 1, 2);
-					}
-					if (key == EKeyboardKey.NUM3)
-					{
-						SetBasicColour(0, 1, 3);
-					}
-					if (key == EKeyboardKey.NUM4)
-					{
-						SetBasicColour(0, 1, 4);
-					}
-					if (key == EKeyboardKey.NUM5)
-					{
-						SetBasicColour(0, 1, 5);
-					}
-					if (key == EKeyboardKey.NUM6)
-					{
-						SetBasicColour(0, 1, 6);
-					}
-					if (key == EKeyboardKey.NUM7)
-					{
-						SetBasicColour(0, 1, 7);
-					}
-					if (key == EKeyboardKey.NUM8)
-					{
-						SetBasicColour(0, 1, 8);
-					}
-					if (key == EKeyboardKey.NUM9)
-					{
-						SetBasicColour(0, 1, 9);
+						int numChar = (int)key;
+
+						SetBasicColour(0, 1, numChar);
 					}
 				}
-				else
-				if (Plugin.ColourStage == 1)
+				else if (Plugin.instance.ColourStage == 1)
 				{
-					if (key == EKeyboardKey.NUM0)
+					if (key.IsNumberKey())
 					{
-						SetBasicColour(1, 2, 0);
-					}
-					if (key == EKeyboardKey.NUM1)
-					{
-						SetBasicColour(1, 2, 1);
-					}
-					if (key == EKeyboardKey.NUM2)
-					{
-						SetBasicColour(1, 2, 2);
-					}
-					if (key == EKeyboardKey.NUM3)
-					{
-						SetBasicColour(1, 2, 3);
-					}
-					if (key == EKeyboardKey.NUM4)
-					{
-						SetBasicColour(1, 2, 4);
-					}
-					if (key == EKeyboardKey.NUM5)
-					{
-						SetBasicColour(1, 2, 5);
-					}
-					if (key == EKeyboardKey.NUM6)
-					{
-						SetBasicColour(1, 2, 6);
-					}
-					if (key == EKeyboardKey.NUM7)
-					{
-						SetBasicColour(1, 2, 7);
-					}
-					if (key == EKeyboardKey.NUM8)
-					{
-						SetBasicColour(1, 2, 8);
-					}
-					if (key == EKeyboardKey.NUM9)
-					{
-						SetBasicColour(1, 2, 9);
+						int numChar = (int)key;
+
+						SetBasicColour(1, 2, numChar);
 					}
 				}
-				else
-				if (Plugin.ColourStage == 2)
+				else if (Plugin.instance.ColourStage == 2)
 				{
-					if (key == EKeyboardKey.NUM0)
+					if (key.IsNumberKey())
 					{
-						SetBasicColour(2, 3, 0);
-					}
-					if (key == EKeyboardKey.NUM1)
-					{
-						SetBasicColour(2, 3, 1);
-					}
-					if (key == EKeyboardKey.NUM2)
-					{
-						SetBasicColour(2, 3, 2);
-					}
-					if (key == EKeyboardKey.NUM3)
-					{
-						SetBasicColour(2, 3, 3);
-					}
-					if (key == EKeyboardKey.NUM4)
-					{
-						SetBasicColour(2, 3, 4);
-					}
-					if (key == EKeyboardKey.NUM5)
-					{
-						SetBasicColour(2, 3, 5);
-					}
-					if (key == EKeyboardKey.NUM6)
-					{
-						SetBasicColour(2, 3, 6);
-					}
-					if (key == EKeyboardKey.NUM7)
-					{
-						SetBasicColour(2, 3, 7);
-					}
-					if (key == EKeyboardKey.NUM8)
-					{
-						SetBasicColour(2, 3, 8);
-					}
-					if (key == EKeyboardKey.NUM9)
-					{
-						SetBasicColour(2, 3, 9);
+						int numChar = (int)key;
+
+						SetBasicColour(2, 3, numChar);
 					}
 				}
-				if (Plugin.ColourStage == 3)
+				if (Plugin.instance.ColourStage == 3)
 				{
 					Color trueColor = new Color(FixedColour1, FixedColour2, FixedColour3);
 
@@ -501,162 +387,60 @@ namespace DevColourInterface
 						{
 							trueColor.r,
 							trueColor.g,
-							trueColor.b
-						});
+							trueColor.b,
+							GorillaComputer.instance.leftHanded
+						}); ;
 					}
-					Plugin.UpdatePreviewColoursFloat(trueColor.r, trueColor.g, trueColor.b);
-					Plugin.UpdateText();
+
+					Plugin.instance.UpdatePreviewColoursFloat(trueColor.r, trueColor.g, trueColor.b);
+					Plugin.instance.UpdateText();
 					Colour1 = 0f;
 					Colour2 = 0f;
 					Colour3 = 0f;
 					FixedColour1 = 0f;
 					FixedColour2 = 0f;
 					FixedColour3 = 0f;
-					Plugin.Page = 0;
-					Plugin.ColourStage = 0;
+					Plugin.instance.Page = 0;
+					Plugin.instance.ColourStage = 0;
 				}
 				UpdateScreen();
 			}
 
-			if (Plugin.Page == 2)
+			if (Plugin.instance.Page == 2)
 			{
-				if (Plugin.ColourStage2 == 0)
+				if (Plugin.instance.ColourStage2 == 0)
 				{
-					if (key == EKeyboardKey.NUM0)
+					if (key.IsNumberKey())
 					{
-						SetBasicColour2(0, 1, 0);
-					}
-					if (key == EKeyboardKey.NUM1)
-					{
-						SetBasicColour2(0, 1, 1);
-					}
-					if (key == EKeyboardKey.NUM2)
-					{
-						SetBasicColour2(0, 1, 2);
-					}
-					if (key == EKeyboardKey.NUM3)
-					{
-						SetBasicColour2(0, 1, 3);
-					}
-					if (key == EKeyboardKey.NUM4)
-					{
-						SetBasicColour2(0, 1, 4);
-					}
-					if (key == EKeyboardKey.NUM5)
-					{
-						SetBasicColour2(0, 1, 5);
-					}
-					if (key == EKeyboardKey.NUM6)
-					{
-						SetBasicColour2(0, 1, 6);
-					}
-					if (key == EKeyboardKey.NUM7)
-					{
-						SetBasicColour2(0, 1, 7);
-					}
-					if (key == EKeyboardKey.NUM8)
-					{
-						SetBasicColour2(0, 1, 8);
-					}
-					if (key == EKeyboardKey.NUM9)
-					{
-						SetBasicColour2(0, 1, 9);
+						int numChar = (int)key;
+
+						SetBasicColour2(0, 1, numChar);
 					}
 				}
-				else
-				if (Plugin.ColourStage2 == 1)
+				else if (Plugin.instance.ColourStage2 == 1)
 				{
-					if (key == EKeyboardKey.NUM0)
+					if (key.IsNumberKey())
 					{
-						SetBasicColour2(1, 2, 0);
-					}
-					if (key == EKeyboardKey.NUM1)
-					{
-						SetBasicColour2(1, 2, 1);
-					}
-					if (key == EKeyboardKey.NUM2)
-					{
-						SetBasicColour2(1, 2, 2);
-					}
-					if (key == EKeyboardKey.NUM3)
-					{
-						SetBasicColour2(1, 2, 3);
-					}
-					if (key == EKeyboardKey.NUM4)
-					{
-						SetBasicColour2(1, 2, 4);
-					}
-					if (key == EKeyboardKey.NUM5)
-					{
-						SetBasicColour2(1, 2, 5);
-					}
-					if (key == EKeyboardKey.NUM6)
-					{
-						SetBasicColour2(1, 2, 6);
-					}
-					if (key == EKeyboardKey.NUM7)
-					{
-						SetBasicColour2(1, 2, 7);
-					}
-					if (key == EKeyboardKey.NUM8)
-					{
-						SetBasicColour2(1, 2, 8);
-					}
-					if (key == EKeyboardKey.NUM9)
-					{
-						SetBasicColour2(1, 2, 9);
+						int numChar = (int)key;
+
+						SetBasicColour2(1, 2 , numChar);
 					}
 				}
-				else
-				if (Plugin.ColourStage2 == 2)
+				else if (Plugin.instance.ColourStage2 == 2)
 				{
-					if (key == EKeyboardKey.NUM0)
+					if (key.IsNumberKey())
 					{
-						SetBasicColour2(2, 3, 0);
-					}
-					if (key == EKeyboardKey.NUM1)
-					{
-						SetBasicColour2(2, 3, 1);
-					}
-					if (key == EKeyboardKey.NUM2)
-					{
-						SetBasicColour2(2, 3, 2);
-					}
-					if (key == EKeyboardKey.NUM3)
-					{
-						SetBasicColour2(2, 3, 3);
-					}
-					if (key == EKeyboardKey.NUM4)
-					{
-						SetBasicColour2(2, 3, 4);
-					}
-					if (key == EKeyboardKey.NUM5)
-					{
-						SetBasicColour2(2, 3, 5);
-					}
-					if (key == EKeyboardKey.NUM6)
-					{
-						SetBasicColour2(2, 3, 6);
-					}
-					if (key == EKeyboardKey.NUM7)
-					{
-						SetBasicColour2(2, 3, 7);
-					}
-					if (key == EKeyboardKey.NUM8)
-					{
-						SetBasicColour2(2, 3, 8);
-					}
-					if (key == EKeyboardKey.NUM9)
-					{
-						SetBasicColour2(2, 3, 9);
+						int numChar = (int)key;
+
+						SetBasicColour2(2, 3, numChar);
 					}
 				}
-				if (Plugin.ColourStage2 == 3)
+				if (Plugin.instance.ColourStage2 == 3)
 				{
 					ConvertMonkeToRGB(_Colour1, "R");
 					ConvertMonkeToRGB(_Colour2, "G");
 					ConvertMonkeToRGB(_Colour3, "B");
-					Plugin.Page = 3;
+					Plugin.instance.Page = 3;
 				}
 				UpdateScreen();
 			}
@@ -664,144 +448,68 @@ namespace DevColourInterface
 		}
 		public void ConvertMonkeToRGB(float ColourToChange, string Change)
 		{
-			float ColorToActuallySetForFucksSakeMyCodeIsSoMessy;
-			if (ColourToChange == 0)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 0;
-				//return 0;
-			}
-			else
-			if (ColourToChange == 1)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 28;
-				//return 28;
-			}
-			else
-			if (ColourToChange == 2)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 57;
-				//return 57;
-			}
-			else
-			if (ColourToChange == 3)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 85;
-				//return 85;
-			}
-			else
-			if (ColourToChange == 4)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 113;
-				//return 113;
-			}
-			else
-			if (ColourToChange == 5)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 142;
-				//return 142;
-			}
-			else
-			if (ColourToChange == 6)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 170;
-				//return 170;
-			}
-			else
-			if (ColourToChange == 7)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 198;
-				//return 198;
-			}
-			else
-			if (ColourToChange == 8)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 227;
-				//return 227;
-			}
-			else
-			if (ColourToChange == 9)
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 255;
-				//return 255;
-			}
-			else
-			{
-				ColorToActuallySetForFucksSakeMyCodeIsSoMessy = 255;
-				//return 255;
-			}
+			//my code is still kinda bad 8/21/2022
 
-			if (Change == "R")
-			{
-				RGBRed = ColorToActuallySetForFucksSakeMyCodeIsSoMessy;
+			float ColorToActuallySetForFucksSakeMyCodeIsSoMessy = rgbList[(int)ColourToChange];
+
+			switch (Change)
+            {
+				case "R":
+					RGBRed = ColorToActuallySetForFucksSakeMyCodeIsSoMessy;
+					break;
+				case "G":
+					RGBGreen = ColorToActuallySetForFucksSakeMyCodeIsSoMessy;
+					break;
+				case "B":
+					RGBBlue = ColorToActuallySetForFucksSakeMyCodeIsSoMessy;
+					break;
 			}
-			else
-			if (Change == "G")
-			{
-				RGBGreen = ColorToActuallySetForFucksSakeMyCodeIsSoMessy;
-			}
-			else
-			if (Change == "B")
-			{
-				RGBBlue = ColorToActuallySetForFucksSakeMyCodeIsSoMessy;
-			}
-			//return ColourThatChanged;
 		}
 
 		public void SetBasicColour(int ColourStage1, int ColourStage2, int ColourToSet)
 		{
-			if (Plugin.ColourStage == 0)
-			{
-				Colour1 = ColourToSet;
-			}
-			else
-				if (Plugin.ColourStage == 1)
-			{
-				Colour2 = ColourToSet;
-			}
-			else
-				if (Plugin.ColourStage == 2)
-			{
-				Colour3 = ColourToSet;
+			switch (Plugin.instance.ColourStage)
+            {
+				case 0:
+					Colour1 = ColourToSet;
+					break;
+				case 1:
+					Colour2 = ColourToSet;
+					break;
+				case 2:
+					Colour3 = ColourToSet;
+					break;
 			}
 
-			if (Plugin.ColourStage == ColourStage1)
-			{
-				Plugin.ColourStage = ColourStage2;
-			}
+			if (Plugin.instance.ColourStage == ColourStage1)
+				Plugin.instance.ColourStage = ColourStage2;
 
-			FixedColour1 = (float)Colour1 / 9f;
-			FixedColour2 = (float)Colour2 / 9f;
-			FixedColour3 = (float)Colour3 / 9f;
-
+			FixedColour1 = Colour1 / 9f;
+			FixedColour2 = Colour2 / 9f;
+			FixedColour3 = Colour3 / 9f;
 		}
 
 		public void SetBasicColour2(int ColourStage1, int ColourStage2, int ColourToSet)
 		{
-			if (Plugin.ColourStage2 == 0)
+			switch (Plugin.instance.ColourStage2)
 			{
-				_Colour1 = ColourToSet;
-			}
-			else
-			if (Plugin.ColourStage2 == 1)
-			{
-				_Colour2 = ColourToSet;
-			}
-			else
-			if (Plugin.ColourStage2 == 2)
-			{
-				_Colour3 = ColourToSet;
+				case 0:
+					_Colour1 = ColourToSet;
+					break;
+				case 1:
+					_Colour2 = ColourToSet;
+					break;
+				case 2:
+					_Colour3 = ColourToSet;
+					break;
 			}
 
-			if (Plugin.ColourStage2 == ColourStage1)
-			{
-				Plugin.ColourStage2 = ColourStage2;
-			}
+			if (Plugin.instance.ColourStage2 == ColourStage1)
+				Plugin.instance.ColourStage2 = ColourStage2;
 
-			_FixedColour1 = (float)Colour1 / 9f;
-			_FixedColour2 = (float)Colour2 / 9f;
-			_FixedColour3 = (float)Colour3 / 9f;
-
+			_FixedColour1 = Colour1 / 9f;
+			_FixedColour2 = Colour2 / 9f;
+			_FixedColour3 = Colour3 / 9f;
 		}
-
 	}
 }
