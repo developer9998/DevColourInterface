@@ -7,6 +7,6 @@
     {
         public const string GUID = "com.dev9998.gorillatag.devcolourinterface";
         public const string Name = "DevColourInterface";
-        public const string Version = "1.0.0";
+        public const string Version = "1.0.2";
     }
 }
